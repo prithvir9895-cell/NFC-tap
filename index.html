@@ -504,43 +504,46 @@
 
   // Turns the configured photo into a File the OS share sheet can attach,
   // so apps like Instagram/WhatsApp receive an actual image, not just text.
-  async function getShareImageFile(){
+  // IMPORTANT: this is prepared ahead of time (on page load), NOT inside the
+  // click handler. navigator.share() only works when called synchronously
+  // inside a user tap — any `await` before it (like fetching the photo)
+  // breaks that link on iOS Safari and some Android browsers, and the
+  // share sheet then silently fails to open at all.
+  let preparedShareFile = null;
+  (async ()=>{
     try{
       const res = await fetch(shareImageUrl);
       const blob = await res.blob();
-      return new File([blob], "maks-dining.jpg", { type: blob.type || "image/jpeg" });
+      preparedShareFile = new File([blob], "maks-dining.jpg", { type: blob.type || "image/jpeg" });
     } catch(err){
-      return null;
+      preparedShareFile = null;
     }
-  }
+  })();
 
-  nativeShareBtn.addEventListener('click', async ()=>{
-    const imageFile = await getShareImageFile();
+  nativeShareBtn.addEventListener('click', ()=>{
     const sharePayload = {
       title: CONFIG.restaurantName,
       text: fullShareText,
       url: shareUrl,
     };
 
-    // Attach the photo when the browser/OS supports sharing files.
-    if(imageFile && navigator.canShare && navigator.canShare({ files: [imageFile] })){
-      sharePayload.files = [imageFile];
+    // Attach the photo when it's ready and the browser/OS supports file sharing.
+    if(preparedShareFile && navigator.canShare && navigator.canShare({ files: [preparedShareFile] })){
+      sharePayload.files = [preparedShareFile];
     }
 
-    try{
-      await navigator.share(sharePayload);
-    } catch(err){
-      if(err.name === 'AbortError') return;
+    // No `await` above this line — the call below must stay synchronous
+    // with the click so the browser recognizes it as a real user gesture.
+    navigator.share(sharePayload).catch(err=>{
+      if(err && err.name === 'AbortError') return;
       // OS rejected the payload (e.g. file share unsupported) — retry text-only.
-      try{
-        await navigator.share({ title: CONFIG.restaurantName, text: fullShareText, url: shareUrl });
-      } catch(err2){
-        if(err2.name !== 'AbortError'){
+      navigator.share({ title: CONFIG.restaurantName, text: fullShareText, url: shareUrl }).catch(err2=>{
+        if(!err2 || err2.name !== 'AbortError'){
           shareStatus.textContent = "Couldn't open the share sheet — try a platform below.";
           shareStatus.classList.add('show');
         }
-      }
-    }
+      });
+    });
   });
 
   // Fallback pills — always shown, useful on desktop or if native share fails.
