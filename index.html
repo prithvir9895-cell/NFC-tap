@@ -255,7 +255,7 @@
 <div class="page">
 
   <div class="seal"><span>&amp;</span></div>
-  <h1 class="name" id="restaurantName">The Fig &amp; Fork</h1>
+  <h1 class="name" id="restaurantName">MAK's &amp; Dining</h1>
   <p class="tagline">Thanks for dining with us</p>
 
   <div class="card">
@@ -341,14 +341,14 @@
      CONFIG — replace these with your restaurant's real details.
      ============================================================ */
   const CONFIG = {
-    restaurantName: "The Fig & Fork",
+    restaurantName: "MAK's Dining",
 
     // The DIRECT review link Google generates for your business — this
     // opens straight to the star-rating popup, no search page in between.
     // Get it from: Google Business Profile app/site → your business →
     // "Get more reviews" → "Share review form" (looks like
     // https://g.page/r/XXXXXXXXXXXXXXX/review). Paste it here.
-    googleReviewUrl: "ChIJ81MaQQANImARn9m01AW8iMI",
+    googleReviewUrl: "https://www.google.com/maps/dir/MAKs+Dining+%E3%83%9E%E3%83%BC%E3%82%AF%E3%82%B9%E3%83%80%E3%82%A4%E3%83%8B%E3%83%B3%E3%82%B0,+102-3+Tateno,+Tsukuba,+Ibaraki+305-0067/MAKs+Dining+%E3%83%9E%E3%83%BC%E3%82%AF%E3%82%B9%E3%83%80%E3%82%A4%E3%83%8B%E3%83%B3%E3%82%B0,+102-3+Tateno,+Tsukuba,+Ibaraki+305-0067/@36.0534108,140.1112604,2733m/data=!3m1!1e3!4m13!4m12!1m5!1m1!1s0x60220d00411a53f3:0xc288bc05d4b4d99f!2m2!1d140.1185424!2d36.0481027!1m5!1m1!1s0x60220d00411a53f3:0xc288bc05d4b4d99f!2m2!1d140.1185424!2d36.0481027?entry=ttu&g_ep=EgoyMDI2MDgyNC4wIKXMDSoASAFQAw%3D%3D",
   };
 
   document.getElementById('restaurantName').textContent = CONFIG.restaurantName;
@@ -422,7 +422,7 @@
     shareUrl: "https://yourrestaurant.example.com",
     // The caption. Keep it short — X truncates around 280 chars anyway.
     caption:
-      "Just had a fantastic time at The Fig & Fork 🍽️✨ " +
+      "Just had a fantastic time at MAK's Dining 🍽️✨ " +
       "Great food, great vibe, highly recommend! #TheFigAndFork #FoodieLife",
   };
 
@@ -449,7 +449,7 @@
   nativeShareBtn.addEventListener('click', async ()=>{
     try{
       await navigator.share({
-        title: "The Fig & Fork",
+        title: "MAK's Dining",
         text: fullShareText,
         url: shareUrl,
       });
