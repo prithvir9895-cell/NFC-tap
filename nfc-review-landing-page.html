@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Rate Your Visit</title>
+<style>
+  /* ============================================================
+     EDIT THESE VALUES to configure the page for your restaurant.
+     ============================================================ */
+  :root{
+    --clr-ink:      #1F1B18;   /* charcoal - background */
+    --clr-ink-2:    #2B2521;   /* charcoal, lighter panel */
+    --clr-cream:    #F6EEE0;   /* main text / cream */
+    --clr-cream-dim:#C9BFAF;   /* dimmed cream text */
+    --clr-fig:      #7A2E3A;   /* deep fig red - accent */
+    --clr-gold:     #C9A227;   /* gold - stars / highlight */
+    --clr-sage:     #8A9A5B;   /* sage - success */
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  @font-face{
+    font-family:'Fraunces';
+    src: local('Georgia');
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse at top, rgba(122,46,58,0.35), transparent 60%),
+      var(--clr-ink);
+    color:var(--clr-cream);
+    font-family:var(--font-body);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:0 0 60px;
+  }
+  .page{
+    width:100%;
+    max-width:480px;
+    padding:36px 22px 0;
+  }
+
+  /* ---------- Header / seal ---------- */
+  .seal{
+    width:84px;height:84px;
+    margin:0 auto 18px;
+    border-radius:50%;
+    background:conic-gradient(from 220deg, var(--clr-gold), var(--clr-fig), var(--clr-gold));
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 8px 24px rgba(0,0,0,0.45);
+  }
+  .seal span{
+    width:70px;height:70px;border-radius:50%;
+    background:var(--clr-ink);
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-display);
+    font-size:28px;font-style:italic;color:var(--clr-gold);
+  }
+  h1.name{
+    font-family:var(--font-display);
+    font-style:italic;
+    font-weight:600;
+    font-size:2.1rem;
+    text-align:center;
+    margin:0 0 4px;
+    letter-spacing:0.3px;
+  }
+  p.tagline{
+    text-align:center;
+    color:var(--clr-cream-dim);
+    margin:0 0 34px;
+    font-size:0.92rem;
+    letter-spacing:0.5px;
+    text-transform:uppercase;
+  }
+
+  /* ---------- Review card ---------- */
+  .card{
+    background:var(--clr-ink-2);
+    border:1px solid rgba(255,255,255,0.06);
+    border-radius:18px;
+    padding:26px 22px;
+    margin-bottom:22px;
+  }
+  .card h2{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:1.25rem;
+    margin:0 0 6px;
+  }
+  .card .sub{
+    color:var(--clr-cream-dim);
+    font-size:0.88rem;
+    margin:0 0 20px;
+  }
+
+  /* stars */
+  .stars{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    margin-bottom:22px;
+  }
+  .stars button{
+    background:none;border:none;cursor:pointer;
+    font-size:2.4rem;line-height:1;
+    color:#463F39;
+    transition:transform 0.15s ease, color 0.15s ease;
+    padding:0;
+  }
+  .stars button.active{ color:var(--clr-gold); }
+  .stars button:active{ transform:scale(1.15); }
+
+  /* suggestion chips */
+  .chip-label{
+    font-size:0.82rem;
+    color:var(--clr-cream-dim);
+    margin:0 0 10px;
+    text-transform:uppercase;
+    letter-spacing:0.6px;
+  }
+  .chips{
+    display:flex;flex-wrap:wrap;gap:8px;
+    margin-bottom:22px;
+  }
+  .chip{
+    border:1px solid rgba(255,255,255,0.15);
+    background:transparent;
+    color:var(--clr-cream);
+    padding:8px 14px;
+    border-radius:999px;
+    font-size:0.85rem;
+    cursor:pointer;
+    font-family:var(--font-body);
+    transition:all 0.15s ease;
+  }
+  .chip.selected{
+    background:var(--clr-fig);
+    border-color:var(--clr-fig);
+    color:#fff;
+  }
+
+  textarea{
+    width:100%;
+    min-height:90px;
+    resize:vertical;
+    background:var(--clr-ink);
+    border:1px solid rgba(255,255,255,0.12);
+    border-radius:12px;
+    color:var(--clr-cream);
+    font-family:var(--font-body);
+    font-size:0.95rem;
+    padding:12px 14px;
+    margin-bottom:18px;
+  }
+  textarea::placeholder{ color:#8A8078; }
+  textarea:focus, .chip:focus-visible, .stars button:focus-visible, .post-btn:focus-visible, .social a:focus-visible{
+    outline:2px solid var(--clr-gold);
+    outline-offset:2px;
+  }
+
+  .post-btn{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    background:var(--clr-gold);
+    color:var(--clr-ink);
+    font-weight:700;
+    font-size:1rem;
+    cursor:pointer;
+    font-family:var(--font-body);
+    transition:filter 0.15s ease;
+  }
+  .post-btn:disabled{
+    opacity:0.5;
+    cursor:not-allowed;
+  }
+  .post-btn:not(:disabled):hover{ filter:brightness(1.08); }
+
+  .note{
+    font-size:0.78rem;
+    color:var(--clr-cream-dim);
+    text-align:center;
+    margin-top:14px;
+    line-height:1.4;
+  }
+
+  .status{
+    text-align:center;
+    font-size:0.9rem;
+    margin-top:14px;
+    color:var(--clr-sage);
+    display:none;
+  }
+  .status.show{ display:block; }
+
+  /* ---------- Social ---------- */
+  .social-title{
+    text-align:center;
+    font-family:var(--font-display);
+    font-style:italic;
+    font-size:1.1rem;
+    color:var(--clr-cream-dim);
+    margin:8px 0 18px;
+  }
+  .social{
+    display:flex;
+    justify-content:center;
+    gap:18px;
+  }
+  .social a{
+    width:52px;height:52px;
+    border-radius:50%;
+    background:var(--clr-ink-2);
+    border:1px solid rgba(255,255,255,0.08);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--clr-cream);
+    text-decoration:none;
+    transition:transform 0.15s ease, background 0.15s ease;
+  }
+  .social a:hover{ transform:translateY(-3px); background:var(--clr-fig); }
+  .social svg{ width:22px;height:22px; }
+
+  footer.pageline{
+    text-align:center;
+    color:#5C544C;
+    font-size:0.72rem;
+    margin-top:34px;
+    letter-spacing:0.4px;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="seal"><span>&amp;</span></div>
+  <h1 class="name" id="restaurantName">The Fig &amp; Fork</h1>
+  <p class="tagline">Thanks for dining with us</p>
+
+  <div class="card">
+    <h2>How was your visit?</h2>
+    <p class="sub">Tap a star, pick what stood out, then post it straight to Google.</p>
+
+    <div class="stars" id="stars" role="radiogroup" aria-label="Star rating">
+      <button type="button" data-value="1" aria-label="1 star">★</button>
+      <button type="button" data-value="2" aria-label="2 stars">★</button>
+      <button type="button" data-value="3" aria-label="3 stars">★</button>
+      <button type="button" data-value="4" aria-label="4 stars">★</button>
+      <button type="button" data-value="5" aria-label="5 stars">★</button>
+    </div>
+
+    <p class="chip-label">What stood out? (optional)</p>
+    <div class="chips" id="chips">
+      <button type="button" class="chip" data-tag="Great taste">🍽️ Great taste</button>
+      <button type="button" class="chip" data-tag="Lovely ambiance">🕯️ Lovely ambiance</button>
+      <button type="button" class="chip" data-tag="Friendly service">🙌 Friendly service</button>
+      <button type="button" class="chip" data-tag="Good value">💰 Good value</button>
+      <button type="button" class="chip" data-tag="Very clean">✨ Very clean</button>
+    </div>
+
+    <textarea id="reviewText" placeholder="Add a few words about your experience..."></textarea>
+
+    <button class="post-btn" id="postBtn" disabled>Post to Google Reviews</button>
+    <p class="status" id="status"></p>
+
+    <p class="note">
+      Posting a review happens on Google's own review page, so it's tied to your Google account and counts toward our public rating. Tapping the button below will take you there with your rating and comment pre-filled where possible.
+    </p>
+  </div>
+
+  <p class="social-title">Follow us</p>
+  <div class="social">
+    <a href="https://www.instagram.com/maks_dining/?hl=en" target="_blank" rel="noopener" aria-label="Instagram">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></svg>
+    </a>
+    <a href="https://x.com/yourrestaurant" target="_blank" rel="noopener" aria-label="X (Twitter)">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 3h3l-7.4 8.4L21.5 21h-6.4l-5-6.5-5.7 6.5H1.4l7.9-9L1 3h6.5l4.5 6 5.5-6z"/></svg>
+    </a>
+    <a href="https://facebook.com/yourrestaurant" target="_blank" rel="noopener" aria-label="Facebook">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-8h2.7l.4-3.3h-3.1V7.6c0-.95.26-1.6 1.63-1.6h1.74V3.14C15.98 3.1 15.06 3 14 3c-2.4 0-4 1.46-4 4.15v2.55H7.3v3.3H10v8h3.5z"/></svg>
+    </a>
+  </div>
+
+  <footer class="pageline">Scan again anytime to leave another review</footer>
+</div>
+
+<script>
+  /* ============================================================
+     CONFIG — replace these with your restaurant's real details.
+     ============================================================ */
+  const CONFIG = {
+    restaurantName: "The Fig & Fork",
+    // Find your Place ID at https://developers.google.com/maps/documentation/places/web-service/place-id
+    googlePlaceId: "ChIJ81MaQQANImARn9m01AW8iMI",
+  };
+
+  document.getElementById('restaurantName').textContent = CONFIG.restaurantName;
+
+  let rating = 0;
+  const selectedTags = new Set();
+
+  const starButtons = document.querySelectorAll('#stars button');
+  const chips = document.querySelectorAll('.chip');
+  const postBtn = document.getElementById('postBtn');
+  const statusEl = document.getElementById('status');
+  const textarea = document.getElementById('reviewText');
+
+  function renderStars(){
+    starButtons.forEach(btn=>{
+      btn.classList.toggle('active', Number(btn.dataset.value) <= rating);
+    });
+    postBtn.disabled = rating === 0;
+  }
+
+  starButtons.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      rating = Number(btn.dataset.value);
+      renderStars();
+    });
+  });
+
+  chips.forEach(chip=>{
+    chip.addEventListener('click', ()=>{
+      const tag = chip.dataset.tag;
+      if(selectedTags.has(tag)){
+        selectedTags.delete(tag);
+        chip.classList.remove('selected');
+      } else {
+        selectedTags.add(tag);
+        chip.classList.add('selected');
+        if(!textarea.value.includes(tag)){
+          textarea.value = textarea.value
+            ? textarea.value + " " + tag + "."
+            : tag + ".";
+        }
+      }
+    });
+  });
+
+  postBtn.addEventListener('click', ()=>{
+    if(rating === 0) return;
+
+    // Google does not offer a public API for third-party sites to submit
+    // a review on a visitor's behalf — reviews must be posted by the
+    // visitor from their own Google account, on Google's own page.
+    // The best a landing page can do is hand off to that page directly,
+    // pre-filled where Google allows it.
+    const reviewUrl = `https://search.google.com/local/writereview?placeid=${encodeURIComponent(CONFIG.googlePlaceId)}`;
+
+    statusEl.textContent = "Taking you to Google to finish posting your review...";
+    statusEl.classList.add('show');
+
+    setTimeout(()=>{
+      window.location.href = reviewUrl;
+    }, 700);
+  });
+
+  renderStars();
+</script>
+</body>
+</html>
